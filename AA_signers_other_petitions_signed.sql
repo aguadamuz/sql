@@ -24,7 +24,7 @@ LIMIT 1;
 ​
 -----------------------------------------------------------
 ​
---number of those signers that signed other petitions (excluding upsells)
+
 WITH us_animal_email_signers AS
 (
 --US users that signed animal petitions they were emailed
@@ -55,4 +55,35 @@ FROM other_petitions_signed ops
 WHERE ops.a NOT IN (SELECT DISTINCT a FROM us_animal_email_signers)
 AND ops.petition_id NOT IN (SELECT upsell_id FROM upsell_events WHERE created_at >= current_date - interval '28 days' AND created_at < current_date)
 LIMIT 1;
-​
+--------------------------------------------------------------------
+
+--animal signers last 28 days (table a)
+WITH us_animal_email_signers AS
+(
+--US users that signed animal petitions they were emailed
+SELECT su.user_id, su.petition_id, su.user_id || su.petition_id AS a
+FROM signatures_users su
+JOIN taggings tgs on su.petition_id = tgs.taggable_id
+WHERE su.signup_context ILIKE '%actionalert%'
+AND su.country_code = 'US'
+AND su.created_at >= current_date - interval '28 days'
+AND su.created_at < current_date
+AND tgs.tag_id = 7367 --7367 is the tag_id for 'animals'
+GROUP BY 1,2
+)
+-- all petition signers last 28 days (table b)
+, other_petitions_signed AS
+(
+SELECT su.user_id, su.petition_id, su.user_id || su.petition_id AS a
+FROM signatures_users su
+WHERE su.country_code = 'US'
+AND su.created_at >= current_date - interval '28 days'
+AND su.created_at < current_date
+AND su.user_id || su.petition_id NOT IN (SELECT DISTINCT a FROM us_animal_email_signers)
+AND su.petition_id NOT IN (SELECT upsell_id FROM upsell_events WHERE created_at >= current_date - interval '28 days' AND created_at < current_date)
+GROUP BY 1,2
+)
+SELECT COUNT(DISTINCT uaes.user_id) AS animal_aa_signers, COUNT(DISTINCT ops.user_id) AS number_signing_other_petitons
+FROM us_animal_email_signers uaes
+LEFT JOIN other_petitions_signed ops ON uaes.user_id = ops.user_id
+LIMIT 10;
