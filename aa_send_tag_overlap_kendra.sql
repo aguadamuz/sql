@@ -1,4 +1,43 @@
 
+----------------------------
+--condensed version
+SELECT DISTINCT
+aaue.user_id, 
+aaue.action_alert_record_id,
+aar.action_alert_content_id,
+aac.scheduled_action_alert_id, 
+aac.event_id,
+saa.campaign_team_id,
+ct.name,
+t.name
+FROM action_alert_user_events aaue
+JOIN action_alert_records aar ON aaue.action_alert_record_id = aar.id
+JOIN action_alert_contents aac ON aar.action_alert_content_id = aac.id
+JOIN scheduled_action_alerts saa ON aac.scheduled_action_alert_id = saa.id
+JOIN campaign_teams ct ON saa.campaign_team_id = ct.id
+JOIN taggings tgs ON aac.event_id = tgs.taggable_id
+JOIN tags t ON tgs.tag_id = t.id
+WHERE aaue.event = 'new' -- new = sent
+AND aaue.created_at >= current_date - interval '3 days'
+AND ct.name = 'US_99'
+ORDER BY 5,1
+LIMIT 99;
+----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 WITH aaue AS --action alert user events
 (
 SELECT aaue.user_id, aaue.action_alert_record_id
