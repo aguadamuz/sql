@@ -11,16 +11,30 @@ WITH e AS
 )
 , uvo AS --upsell views and optins
 (
-	SELECT a.upsell_id, a.petition_id, a.organization_name, a.targeting_type,
-	SUM(views) AS views,
-	SUM(optins) AS optins
-	FROM awang.kpi_dash_views a
-	join awang.kpi_dash_optins b on a.upsell_id = b.upsell_id and a.petition_id = b.petition_id and a.organization_name = b.organization_name and a.targeting_type = b.targeting_type
-	WHERE a.upsell_view_date >= current_date - interval '7 days'
-	AND b.upsell_optin_date >= current_date - interval '7 days'
-	AND a.country_code = 'US'
-	AND b.country_code = 'US'
-	GROUP BY 1,2,3,4
+	
+with views as
+(
+SELECT upsell_id, petition_id, organization_name, targeting_type, SUM(views) AS views
+FROM awang.kpi_dash_views
+WHERE upsell_view_date >= current_date - interval '7 days'
+AND country_code = 'US'
+group by 1,2,3,4
+),
+
+optins as
+(
+SELECT upsell_id, petition_id, organization_name, targeting_type, SUM(optins) AS optins
+FROM awang.kpi_dash_optins
+WHERE upsell_optin_date >= current_date - interval '7 days'
+AND country_code = 'US'
+
+group by 1,2,3,4
+)
+
+SELECT a.upsell_id, a.petition_id, a.organization_name, a.targeting_type, SUM(a.views) AS views, SUM(b.optins) AS optins
+FROM views a
+JOIN optins b on a.upsell_id = b.upsell_id and a.petition_id = b.petition_id and a.organization_name = b.organization_name and a.targeting_type = b.targeting_type
+GROUP BY 1,2,3,4
 )
 , idft AS -- ids for tags
 (
@@ -37,6 +51,7 @@ WITH e AS
 	SELECT DISTINCT idft.id, t.name FROM idft
 	JOIN taggings tgs ON tgs.taggable_id = idft.id
 	JOIN tags t ON tgs.tag_id = t.id
+	WHERE tgs.created_by_staff_member = 1
 	--WHERE t.locale = 'en-US'
 )
 , tag2 AS 
