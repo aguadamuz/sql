@@ -83,7 +83,7 @@ AND su.user_id || su.petition_id NOT IN (SELECT DISTINCT a FROM us_animal_email_
 AND su.petition_id NOT IN (SELECT upsell_id FROM upsell_events WHERE created_at >= current_date - interval '28 days' AND created_at < current_date)
 GROUP BY 1,2
 )
-SELECT COUNT(DISTINCT uaes.user_id) AS animal_aa_signers, COUNT(DISTINCT ops.user_id) AS number_signing_other_petitons
+SELECT COUNT(DISTINCT uaes.user_id) AS animal_aa_signers, COUNT(DISTINCT ops.user_id) AS number_signing_other_petitons, COUNT(DISTINCT ops.user_id)/COUNT(DISTINCT uaes.user_id)::real AS percentage_signing_other
 FROM us_animal_email_signers uaes
 LEFT JOIN other_petitions_signed ops ON uaes.user_id = ops.user_id
 LIMIT 10;
