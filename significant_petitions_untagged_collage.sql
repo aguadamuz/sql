@@ -9,7 +9,7 @@ WHERE tgs.taggable_id IS NULL
 AND e.created_locale = 'en-US'
 AND e.status = 1
 AND e.deleted_at IS NULL
-AND e.total_signature_count >= 500
+AND e.total_signature_count >= 100
 GROUP BY 1,2,3,4,5,6,7
 ORDER BY 3 DESC
 )
