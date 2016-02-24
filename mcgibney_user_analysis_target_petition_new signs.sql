@@ -34,12 +34,11 @@ GROUP BY 1,2,3,4
 CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM events WHERE id <> 4623766) THEN 1 ELSE 0 END AS starter,
 CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM share_petition WHERE petition_id <> 4623766) THEN 1 ELSE 0 END AS sharer,
 CASE WHEN s.user_id IN (SELECT DISTINCT id FROM users WHERE total_actions > 1) THEN 1 ELSE 0 END AS multiple_actions,
-CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM signatures_petitions WHERE petition_id <> 4623766) THEN 1 ELSE 0 AS signers,
+CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM signatures_petitions WHERE petition_id <> 4623766) THEN 1 ELSE 0 END AS signers
 FROM signers s
 )
 SELECT count(distinct user_id), SUM(starter) AS starters, SUM(sharer) AS sharers, SUM(multiple_actions) AS multiple_actions
 FROM count
-
 
 
 ---------------------------------------------
@@ -83,7 +82,8 @@ GROUP BY 1,2,3,4
 CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM events WHERE id <> 4623766) THEN 1 ELSE 0 END AS starter,
 CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM share_petition WHERE petition_id <> 4623766) THEN 1 ELSE 0 END AS sharer,
 CASE WHEN s.user_id IN (SELECT DISTINCT id FROM users WHERE total_actions > 1) THEN 1 ELSE 0 END AS multiple_actions,
-CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM signatures_petitions WHERE petition_id <> 4623766) THEN 1 ELSE 0 AS signers
+CASE WHEN s.user_id IN (SELECT DISTINCT user_id FROM signatures_petitions WHERE petition_id <> 4623766) THEN 1 ELSE 0 END AS signers
+FROM signers s
 )
 SELECT count(distinct user_id), SUM(starter) AS starters, SUM(sharer) AS sharers, SUM(signers) AS signers, SUM(multiple_actions) AS multiple_actions
 FROM count
