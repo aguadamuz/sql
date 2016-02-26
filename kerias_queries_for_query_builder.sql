@@ -16,12 +16,11 @@ SELECT u.id FROM users u
 JOIN emails em ON u.id = em.user_id
 JOIN email_preferences ep ON u.id = ep.user_id
 WHERE em.status = 2
---AND u.this_login <= current_date - interval '1 year'
+AND u.this_login >= current_date - interval '1 year'
 AND u.country = 'US'
 AND ep.send_action_alert_emails = 1
 ORDER BY random()
 LIMIT 999
-
 
 
 
