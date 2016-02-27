@@ -1,17 +1,5 @@
 --for RA query
---there is no profiles table in redshift (there is in MySQL)
-select profiles.user_id from profiles
-join emails on profiles.user_id = emails.user_id
-join users on profiles.user_id = users.id
-join email_preferences on profiles.user_id = email_preferences.user_id
-where emails.status = 2
-and DATE_SUB(CURDATE(), Interval '1 YEAR') <= users.this_login
-and profiles.country = "US"
-and email_preferences.send_action_alert_emails = 1
-order by rand()
-limit 999
 
---updated
 SELECT u.id FROM users u
 JOIN emails em ON u.id = em.user_id
 JOIN email_preferences ep ON u.id = ep.user_id
@@ -21,6 +9,7 @@ AND u.country = 'US'
 AND ep.send_action_alert_emails = 1
 ORDER BY random()
 LIMIT 999
+;
 
 
 
@@ -66,10 +55,8 @@ FROM   action_alert_contents aac
          ON ( saa.id = aaug.scheduled_action_alert_id ) 
        JOIN campaign_teams ct 
          ON ct.id = saa.campaign_team_id 
-WHERE  saa.campaign_team_id IN ( 6, 7, 22, 21, 
-                                 40, 3, 41 ) 
-       --getting an error for trying to divide by zero 
+WHERE  saa.campaign_team_id IN ( 6, 7, 22, 21, 40, 3, 41 )
        AND aar.num_sent > 0 
        AND aar.num_views > 0 
-ORDER  BY aar.sent_date DESC 
-LIMIT  999; 
+ORDER  BY aar.sent_date DESC
+LIMIT 999;
