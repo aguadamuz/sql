@@ -24,8 +24,21 @@ ORDER BY 5,1
 LIMIT 99;
 ----------------------------
 
-
-
+--for terminal
+SELECT DISTINCT
+t.name AS tags,
+aaue.user_id AS id 
+FROM action_alert_user_events aaue
+JOIN action_alert_records aar ON aaue.action_alert_record_id = aar.id
+JOIN action_alert_contents aac ON aar.action_alert_content_id = aac.id
+JOIN scheduled_action_alerts saa ON aac.scheduled_action_alert_id = saa.id
+JOIN campaign_teams ct ON saa.campaign_team_id = ct.id
+JOIN taggings tgs ON aac.event_id = tgs.taggable_id
+JOIN tags t ON tgs.tag_id = t.id
+WHERE aaue.event = 'new' -- new = sent
+AND aaue.created_at::date >= current_date - interval '90 days'
+AND ct.name = 'US_99'
+\g ~/Downloads/redshift_tag_overlap.csv
 
 
 
