@@ -25,7 +25,8 @@ AND ct.name IN ('US_99', 'US_01', 'US_03') --users that received an AA, ML, or S
 )
 ,non_receivers AS
 (
--- eligible US users that HAVE NOT received an HT Action Alert, ML Action Alert, or Sweeps email in the last 365 days
+-- eligible US users excluding those that have received an HT Action Alert, ML Action Alert, or Sweeps email in the last 365 days
+-- excluding users with an 'action' in the last 30 days as those users may not have had time to receive an action alert based on recent action
 SELECT u.id, u.email, u.first_name, u.last_name, u.created_at, u.last_action_time, DATEDIFF(day, u.created_at, u.last_action_time) AS datediff
 FROM eligible_users eu
 JOIN users u ON eu.id = u.id
@@ -33,7 +34,7 @@ LEFT JOIN emailed_users emu ON eu.id = emu.user_id
 WHERE emu.user_id IS NULL
 AND u.country = 'US'
 AND u.locale = 'en-US'
-AND u.last_action_time <= current_date - interval '30 days' -- excludig users that have had a recent action as they may have not had time to receive an action alert
+AND u.last_action_time <= current_date - interval '30 days' -- excluding users that have had a recent action as they may have not had time to receive an action alert
 GROUP BY 1,2,3,4,5,6,7
 ORDER BY 1 DESC
 )
