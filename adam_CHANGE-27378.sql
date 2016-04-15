@@ -15,6 +15,8 @@ FROM signatures_users su JOIN events e ON e.id = su.petition_id JOIN taggings tg
 WHERE su.created_at::DATE BETWEEN '2016-01-01' AND '2016-03-31'
 AND e.deleted_at IS NULL
 AND e.created_locale = 'en-US'
+AND e.status > 0
+AND e.deleted_at IS NULL
 AND t.name IN ('animals', 'criminal justice', 'economic justice', 'environment', 'lgbt rights', 'health and safety', 'human trafficking', 'immigration', 'sustainability', 'women', 'sports', 'disability rights', 'food', 'technology')
 GROUP BY 1,2
 HAVING COUNT(DISTINCT su.user_id) > 1)
@@ -60,3 +62,7 @@ AND t.name IN ('animals', 'criminal justice', 'economic justice', 'environment',
 GROUP BY 1,2
 HAVING COUNT(DISTINCT su.user_id) > 1)
 GROUP BY 1;
+
+--average number of comments across all petitions Q1
+
+SELECT * FROM opinions

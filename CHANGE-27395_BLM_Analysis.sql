@@ -108,3 +108,5 @@ GROUP BY 1
 HAVING COUNT(DISTINCT petition_id) > 2
 )
 SELECT COUNT(DISTINCT o.user_id) FROM opinions o JOIN signers s ON o.user_id = s.user_id;
+
+
