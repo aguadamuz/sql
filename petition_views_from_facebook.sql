@@ -10,7 +10,7 @@ limit 99;
 
 
 select avg(count) from
-select petition_id, count(uuid) as count from
+(select petition_id, count(uuid) as count from
 (select pv.petition_id, pv.created_at::date, pv.uuid, pv.user_id
 from petition_view pv join events e on pv.petition_id = e.id
 where pv.current_medium = 'facebook'
@@ -20,4 +20,5 @@ and e.sponsored = 0
 and e.created_locale = 'en-US'
 and e.status > 0
 and e.deleted_at is null
-group by 1)
+and pv.country_code = 'US'
+group by 1))
